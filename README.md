@@ -11,6 +11,7 @@ Here are dependencies related to ESLint and prettier
 "eslint-config-next": "12.1.0",
 "eslint-config-prettier": "^8.3.0"
 ```
+
 On top of the default setting from next.js, `"@typescript-eslint/recommended` is also used. To avoid conflicts,
 `eslint-config-prettier` is introduced. This could cause some rules from the `@typescript-eslint/recommended` to be
 excluded.
@@ -18,13 +19,16 @@ excluded.
 Other customized rules
 
 ESLint
+
 ```
   "rules": {
     "react/prop-types": "off",
     "@typescript-eslint/explicit-function-return-type": "off"
   }
 ```
+
 Prettier
+
 ```
 {
   "singleQuote": true,
