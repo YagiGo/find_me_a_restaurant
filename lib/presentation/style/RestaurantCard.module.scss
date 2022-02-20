@@ -1,0 +1,22 @@
+.card {
+  transition: all 0.3s;
+  cursor: pointer;
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: -10px 0 10px rgba(0, 0, 0, 0.3);
+  }
+  :global .rating {
+    color: var(--bs-warning);
+  }
+  :global .price {
+    color: var(--bs-success);
+  }
+}
+
+.open {
+  border-left: 10px solid var(--bs-success);
+}
+
+.close {
+  border-left: 10px solid var(--bs-danger);
+}
