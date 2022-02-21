@@ -1,0 +1,23 @@
+.layout {
+  box-sizing: border-box;
+  height: 100vh;
+  overflow: hidden;
+}
+.map {
+  padding: 0;
+  height: 250px;
+  @media (min-width: 768px) {
+    height: 500px;
+  }
+  @media (min-width: 992px) {
+    height: calc(100vh - 72px);
+  }
+}
+.list {
+  padding: 0;
+  overflow: auto;
+  height: 100vh;
+  @media (min-width: 992px) {
+    height: calc(100vh - 72px);
+  }
+}

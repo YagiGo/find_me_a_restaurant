@@ -3,9 +3,11 @@ import { Restaurant } from '../../entities/Restaurant';
 import RestaurantCard from './RestaurantCard';
 import { MapContext } from '../../context/MapContext';
 import { Button } from 'react-bootstrap';
+import NoResult from './NoResult';
+import Loading from './Loading';
 
 const RestaurantsList: FC = () => {
-  const { restaurants } = useContext(MapContext);
+  const { restaurants, noResult, isSearching } = useContext(MapContext);
   const [randomSelect, setRandomSelect] = useState<Restaurant>();
   const shuffleRestaurant = () => {
     setRandomSelect(
@@ -26,29 +28,36 @@ const RestaurantsList: FC = () => {
       priceLevel={item.priceLevel}
     />
   ));
-  console.log(restaurants);
-  return (
-    <div style={{ overflow: 'auto', height: '100vh' }}>
-      <div className='p-2'>
-        <h4>Hard to decide? How about this one!</h4>
-        <div className='d-flex'>
-          <Button onClick={shuffleRestaurant}>Shuffle</Button>
+
+  const renderList = () => {
+    if (noResult) {
+      return <NoResult />;
+    } else if (!randomSelect) {
+      return <Loading />;
+    } else {
+      return (
+        <div style={{ overflow: 'auto', height: '100vh' }}>
+          <div className='p-2'>
+            <h4>Hard to decide? How about this one!</h4>
+            <div className='d-flex'>
+              <Button onClick={shuffleRestaurant}>Shuffle</Button>
+            </div>
+          </div>
+          <RestaurantCard
+            name={randomSelect.name}
+            rating={randomSelect.rating}
+            placeId={randomSelect.placeId ? randomSelect.placeId : ''}
+            priceLevel={randomSelect.priceLevel}
+          />
+          <div className='overflow-auto'>
+            <h4 className='p-2'>Others options in this area</h4>
+            {isSearching ? <Loading /> : rows}
+          </div>
         </div>
-      </div>
-      {randomSelect ? (
-        <RestaurantCard
-          name={randomSelect.name}
-          rating={randomSelect.rating}
-          placeId={randomSelect.placeId ? randomSelect.placeId : ''}
-          priceLevel={randomSelect.priceLevel}
-        />
-      ) : (
-        <h6>Loading</h6>
-      )}
-      <h4 className='p-2'>Others options in this area</h4>
-      {rows}
-    </div>
-  );
+      );
+    }
+  };
+  return renderList();
 };
 
 export default RestaurantsList;

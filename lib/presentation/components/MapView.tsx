@@ -35,7 +35,7 @@ const MapView: FC = () => {
 
   return (
     <GoogleMap
-      mapContainerStyle={{ width: '100%', height: '100vh' }}
+      mapContainerStyle={{ width: '100%', height: 'inherit' }}
       center={center}
       zoom={15}
       onLoad={onMapLoad}

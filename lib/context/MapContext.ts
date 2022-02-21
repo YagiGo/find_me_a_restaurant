@@ -12,8 +12,12 @@ type MapContextType = {
   setPlaceServices: (repo: RestaurantsRepository) => void;
   keyword: string;
   setKeyword: (word: string) => void;
-  // onMapLoad: (map: google.maps.Map)=>void;
-  // onMapUnmount: ()=>void;
+  apiError: boolean;
+  setApiError: (val: boolean) => void;
+  noResult: boolean;
+  setNoResult: (val: boolean) => void;
+  isSearching: boolean;
+  setIsSearching: (val: boolean) => void;
 };
 
 export const MapContext = createContext<MapContextType>({
@@ -26,6 +30,10 @@ export const MapContext = createContext<MapContextType>({
   setPlaceServices: () => null,
   keyword: '',
   setKeyword: () => null,
-  // onMapLoad: ()=>null,
-  // onMapUnmount: ()=>null
+  apiError: false,
+  setApiError: () => null,
+  noResult: false,
+  setNoResult: () => null,
+  isSearching: false,
+  setIsSearching: () => null,
 });

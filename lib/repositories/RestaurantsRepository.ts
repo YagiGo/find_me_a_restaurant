@@ -6,24 +6,27 @@ import { nanoid } from 'nanoid';
 
 export class RestaurantsRepository {
   private placeService: google.maps.places.PlacesService;
-
+  private readonly center;
   constructor(public map: google.maps.Map | null) {
     this.placeService = new google.maps.places.PlacesService(
       map ? map : new HTMLDivElement(),
     );
+    this.center = {
+      lat: process.env.CENTER_LAT ? Number(process.env.CENTER_LAT) : 0,
+      lng: process.env.CENTER_LNG ? Number(process.env.CENTER_LNG) : 0,
+    };
   }
 
   public getRestaurantsWithinRange = async (
-    center: google.maps.LatLng,
     type: string,
     radius: number,
   ): Promise<Restaurant[]> => {
     return new Promise((resolve, reject) => {
       this.placeService.nearbySearch(
-        { location: center, radius: radius, type: type, openNow: true },
+        { location: this.center, radius: radius, type: type, openNow: true },
         (result, status) => {
+
           if (status === google.maps.places.PlacesServiceStatus.OK && result) {
-            console.log(result);
             resolve(
               result.map(
                 (i) =>
@@ -93,15 +96,11 @@ export class RestaurantsRepository {
   };
 
   public querySearch = async (keyword: string): Promise<Restaurant[]> => {
-    //TODO: DEBUG
-    const center = {
-      lat: 35.664839,
-      lng: 139.738096,
-    };
     return new Promise((resolve, reject) => {
       this.placeService.textSearch(
-        { location: center, radius: 1000, query: keyword },
+        { location: this.center, radius: 1000, query: keyword },
         (result, status) => {
+          console.log(result, status);
           if (status === google.maps.places.PlacesServiceStatus.OK) {
             if (!result) resolve([]);
             else {
