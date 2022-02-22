@@ -1,12 +1,13 @@
 import '../lib/presentation/style/global.scss';
 import type { AppProps } from 'next/app';
 import { Libraries } from '@react-google-maps/api/src/utils/make-load-script-url';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Restaurant } from '../lib/entities/Restaurant';
 import { RestaurantsRepository } from '../lib/repositories/RestaurantsRepository';
 import { useLoadScript } from '@react-google-maps/api';
 import { MapContext } from '../lib/context/MapContext';
 import { getGoogleMapApiKey } from '../lib/infrastructure/apiKey';
+import Head from 'next/head';
 
 const lib: Libraries = ['places'];
 
@@ -25,30 +26,53 @@ function MyApp({ Component, pageProps }: AppProps) {
     googleMapsApiKey: getGoogleMapApiKey(),
     libraries: lib,
   });
+
+  useEffect(() => {
+    const getInnerHeight = () => {
+      return window.innerHeight;
+    };
+    const handleResize = () => {
+      const vh = getInnerHeight() * 0.01;
+      document.documentElement.style.setProperty('--vh', `${vh}px`);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   return (
-    isLoaded && (
-      <MapContext.Provider
-        value={{
-          restaurants,
-          setRestaurants,
-          isLoaded,
-          map,
-          setMap,
-          placeServices,
-          setPlaceServices,
-          keyword,
-          setKeyword,
-          noResult,
-          setNoResult,
-          apiError,
-          setApiError,
-          isSearching,
-          setIsSearching,
-        }}
-      >
-        <Component {...pageProps} />
-      </MapContext.Provider>
-    )
+    <>
+      <Head>
+        <title key='title'>Restaurant Finder</title>
+        <meta
+          name='description'
+          content='A simple web app helping you decide what for lunch'
+          key='description'
+        />
+      </Head>
+      {isLoaded && (
+        <MapContext.Provider
+          value={{
+            restaurants,
+            setRestaurants,
+            isLoaded,
+            map,
+            setMap,
+            placeServices,
+            setPlaceServices,
+            keyword,
+            setKeyword,
+            noResult,
+            setNoResult,
+            apiError,
+            setApiError,
+            isSearching,
+            setIsSearching,
+          }}
+        >
+          <Component {...pageProps} />
+        </MapContext.Provider>
+      )}
+    </>
   );
 }
 

@@ -3,6 +3,10 @@ import { Navbar, InputGroup, FormControl, NavLink } from 'react-bootstrap';
 import { MapContext } from '../../context/MapContext';
 import { FontAwesomeIcon as FA } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
+import { faUtensils } from '@fortawesome/free-solid-svg-icons';
+import Style from '../style/TopBar.module.scss';
+import { useRouter } from 'next/router';
+
 const AppLayout: FC = () => {
   const {
     placeServices,
@@ -12,6 +16,7 @@ const AppLayout: FC = () => {
     setIsSearching,
     setNoResult,
   } = useContext(MapContext);
+  const router = useRouter();
   const handleSubmit = async (
     e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
@@ -35,18 +40,24 @@ const AppLayout: FC = () => {
         }
       } finally {
         setIsSearching(false);
+        if (router.pathname !== '/') await router.push('/');
       }
     }
   };
   return (
-    <Navbar bg='dark' expand='lg' variant='dark' className=''>
-      <Navbar.Brand>
+    <Navbar
+      bg='dark'
+      expand='lg'
+      variant='dark'
+      className='justify-content-between'
+    >
+      <Navbar.Brand className='ps-2'>
         <NavLink style={{ color: 'white' }} href='/'>
-          {' '}
-          Restaurant Finder{' '}
+          <FA className={`${Style.logo} fa-lg`} icon={faUtensils} />
+          <span className={`${Style.text}`}>Restaurant Finder</span>
         </NavLink>
       </Navbar.Brand>
-      <InputGroup className='w-50'>
+      <InputGroup className='w-50 pe-2' style={{ maxWidth: '800px' }}>
         <InputGroup.Text>
           <FA icon={faMagnifyingGlass} />
         </InputGroup.Text>

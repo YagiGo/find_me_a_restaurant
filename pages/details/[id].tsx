@@ -6,6 +6,7 @@ import { Details } from '../../lib/entities/Details';
 import AppLayout from '../../lib/presentation/components/AppLayout';
 import RestaurantDetail from '../../lib/presentation/components/RestaurantDetail';
 import Loading from '../../lib/presentation/components/Loading';
+import Error from '../../lib/presentation/components/Error';
 
 const RestaurantDetails: NextPage = () => {
   const { setRestaurants, placeServices, setApiError, apiError } =
@@ -16,30 +17,30 @@ const RestaurantDetails: NextPage = () => {
   const fetchData = async (id: string) => {
     try {
       const data = await placeServices?.getRestaurantDetails(id);
+      if (!data) return;
       setDetails(data);
-    } catch {
-      setApiError(true);
+      setRestaurants([data.basicInfo]);
+    } catch (e) {
+      if (e === google.maps.places.PlacesServiceStatus.INVALID_REQUEST) {
+        setApiError(true);
+      }
     }
   };
   useEffect(() => {
     fetchData(String(id));
-  }, [id]);
+  }, [id, placeServices]);
 
-  useEffect(() => {
-    if (!details) return;
-    setRestaurants([details.basicInfo]);
-  }, [details]);
+  const renderView = () => {
+    if (apiError) {
+      return <Error />;
+    } else if (details) {
+      return <RestaurantDetail details={details} />;
+    } else {
+      return <Loading />;
+    }
+  };
 
-  return (
-    <AppLayout>
-      {apiError && <h1>ERROR!</h1>}
-      {!apiError && details ? (
-        <RestaurantDetail details={details} />
-      ) : (
-        <Loading />
-      )}
-    </AppLayout>
-  );
+  return <AppLayout>{renderView()}</AppLayout>;
 };
 
 export default RestaurantDetails;

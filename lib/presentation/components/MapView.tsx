@@ -1,13 +1,11 @@
 import React, { FC, useCallback, useContext, useEffect } from 'react';
-import { GoogleMap, Marker } from '@react-google-maps/api';
+import { GoogleMap, InfoWindow, Marker } from '@react-google-maps/api';
 import { RestaurantsRepository } from '../../repositories/RestaurantsRepository';
 import { MapContext } from '../../context/MapContext';
+import { getOfficeGeoInfo } from '../../infrastructure/getOfficeGeoInfo';
+import MarkerInfo from './MarkerInfo';
+import { faBuilding } from '@fortawesome/free-solid-svg-icons';
 const MapView: FC = () => {
-  // TODO: DEBUG
-  const center = {
-    lat: 35.664839,
-    lng: 139.738096,
-  };
   const { restaurants, map, setMap, setPlaceServices } = useContext(MapContext);
 
   useEffect(() => {
@@ -29,18 +27,47 @@ const MapView: FC = () => {
 
   const markers = restaurants.map((i) => {
     if (i.lat && i.lng) {
-      return <Marker key={i.placeId} position={{ lat: i.lat, lng: i.lng }} />;
+      return (
+        <InfoWindow key={i.placeId} position={{ lat: i.lat, lng: i.lng }}>
+          <MarkerInfo name={i.name ? i.name : 'Name Unknown'} />
+        </InfoWindow>
+      );
     }
   });
 
+  const getCenter = () => {
+    // If there is only 1 restaurant to be shown, we've chosen the detail page
+    // so center on the chosen restaurant. Otherwise, center on the office building
+    return restaurants.length === 1
+      ? {
+          lat: restaurants[0].lat ? restaurants[0].lat : 0,
+          lng: restaurants[0].lng ? restaurants[0].lng : 0,
+        }
+      : getOfficeGeoInfo();
+  };
   return (
     <GoogleMap
       mapContainerStyle={{ width: '100%', height: 'inherit' }}
-      center={center}
+      center={getCenter()}
       zoom={15}
       onLoad={onMapLoad}
       onUnmount={onMapUnmount}
     >
+      <Marker
+        position={getOfficeGeoInfo()}
+        icon={{
+          path: faBuilding.icon[4] as string,
+          fillColor: '#000000',
+          fillOpacity: 1,
+          anchor: new google.maps.Point(
+            faBuilding.icon[0] / 2,
+            faBuilding.icon[1],
+          ),
+          strokeWeight: 1,
+          strokeColor: '#ffffff',
+          scale: 0.075,
+        }}
+      />
       {markers}
     </GoogleMap>
   );

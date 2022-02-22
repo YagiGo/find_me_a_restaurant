@@ -25,7 +25,6 @@ export class RestaurantsRepository {
       this.placeService.nearbySearch(
         { location: this.center, radius: radius, type: type, openNow: true },
         (result, status) => {
-
           if (status === google.maps.places.PlacesServiceStatus.OK && result) {
             resolve(
               result.map(
@@ -53,7 +52,6 @@ export class RestaurantsRepository {
     return new Promise((resolve, reject) => {
       this.placeService.getDetails({ placeId: placeId }, (result, status) => {
         if (status === google.maps.places.PlacesServiceStatus.OK && result) {
-          console.log(result);
           const photos = result.photos?.map(
             (photo) =>
               new Photo(nanoid(), photo.getUrl(), photo.width, photo.height),
@@ -100,7 +98,6 @@ export class RestaurantsRepository {
       this.placeService.textSearch(
         { location: this.center, radius: 1000, query: keyword },
         (result, status) => {
-          console.log(result, status);
           if (status === google.maps.places.PlacesServiceStatus.OK) {
             if (!result) resolve([]);
             else {

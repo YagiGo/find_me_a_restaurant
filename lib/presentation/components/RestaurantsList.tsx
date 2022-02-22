@@ -36,20 +36,18 @@ const RestaurantsList: FC = () => {
       return <Loading />;
     } else {
       return (
-        <div style={{ overflow: 'auto', height: '100vh' }}>
-          <div className='p-2'>
-            <h4>Hard to decide? How about this one!</h4>
-            <div className='d-flex'>
-              <Button onClick={shuffleRestaurant}>Shuffle</Button>
-            </div>
+        <div>
+          <div className='p-2 d-flex flex-column'>
+            <h4 className='p-2'>Hard to decide? How about this one!</h4>
+            <Button onClick={shuffleRestaurant}>Shuffle</Button>
+            <RestaurantCard
+              name={randomSelect.name}
+              rating={randomSelect.rating}
+              placeId={randomSelect.placeId ? randomSelect.placeId : ''}
+              priceLevel={randomSelect.priceLevel}
+            />
           </div>
-          <RestaurantCard
-            name={randomSelect.name}
-            rating={randomSelect.rating}
-            placeId={randomSelect.placeId ? randomSelect.placeId : ''}
-            priceLevel={randomSelect.priceLevel}
-          />
-          <div className='overflow-auto'>
+          <div className='p-2'>
             <h4 className='p-2'>Others options in this area</h4>
             {isSearching ? <Loading /> : rows}
           </div>

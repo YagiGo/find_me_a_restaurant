@@ -41,12 +41,8 @@ const RestaurantCard: FC<prop> = ({ name, rating, placeId, priceLevel }) => {
     router.push(`/details/${placeId}`);
   };
   return (
-    <Card
-      onClick={goToDetailPage}
-      style={{ overflow: 'auto' }}
-      className={`${Style.card}`}
-    >
-      <Card.Title className='px-2'>{name}</Card.Title>
+    <Card onClick={goToDetailPage} className={`${Style.card}`}>
+      <Card.Title className='px-2 overflow-auto'>{name}</Card.Title>
       <Card.Body className='pt-0'>
         <div className='price'>{price}</div>
         <div className='rating'>{stars}</div>

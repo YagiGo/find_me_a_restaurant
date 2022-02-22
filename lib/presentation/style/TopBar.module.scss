@@ -1,12 +1,11 @@
-.topbar {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  padding: 0 2rem;
-  :global .topbar__search {
-    margin: 5px 0;
-    background-color: #eaeaea;
-    overflow: hidden;
-    border-radius: 10px;
+.logo {
+  @media (min-width: 992px) {
+    display: none;
+  }
+}
+
+.text {
+  @media (max-width: 992px) {
+    display: none;
   }
 }

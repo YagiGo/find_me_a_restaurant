@@ -1,6 +1,7 @@
 .layout {
   box-sizing: border-box;
   height: 100vh;
+  height: calc(var(--vh, 1vh) * 100);
   overflow: hidden;
 }
 .map {
@@ -11,13 +12,20 @@
   }
   @media (min-width: 992px) {
     height: calc(100vh - 72px);
+    height: calc(var(--vh, 1vh) * 100 - 72px);
   }
 }
 .list {
   padding: 0;
   overflow: auto;
-  height: 100vh;
+  height: calc(100vh - 250px - 72px);
+  height: calc(var(--vh, 1vh) * 100 - 250px - 72px);
+  @media (min-width: 768px) {
+    height: calc(100vh - 500px - 72px);
+    height: calc(var(--vh, 1vh) * 100 - 500px - 72px);
+  }
   @media (min-width: 992px) {
     height: calc(100vh - 72px);
+    height: calc(var(--vh, 1vh) * 100 - 72px);
   }
 }
