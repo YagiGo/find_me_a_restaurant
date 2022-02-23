@@ -3,6 +3,7 @@ import { Photo } from '../entities/Photo';
 import { Review } from '../entities/Review';
 import { Details } from '../entities/Details';
 import { nanoid } from 'nanoid';
+import { logApiError } from '../infrastructure/logger';
 
 export class RestaurantsRepository {
   private placeService: google.maps.places.PlacesService;
@@ -41,6 +42,7 @@ export class RestaurantsRepository {
               ),
             );
           } else {
+            logApiError(status);
             reject(status);
           }
         },
@@ -87,6 +89,7 @@ export class RestaurantsRepository {
             ),
           );
         } else {
+          logApiError(status);
           reject(status);
         }
       });
@@ -117,6 +120,7 @@ export class RestaurantsRepository {
               );
             }
           } else {
+            logApiError(status);
             reject(status);
           }
         },
