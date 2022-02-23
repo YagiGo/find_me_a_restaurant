@@ -48,7 +48,7 @@ const RestaurantsList: FC = () => {
             />
           </div>
           <div className='p-2'>
-            <h4 className='p-2'>Others options in this area</h4>
+            <h4 className='p-2'>Other options in this area</h4>
             {isSearching ? <Loading /> : rows}
           </div>
         </div>

@@ -8,6 +8,7 @@ import { useLoadScript } from '@react-google-maps/api';
 import { MapContext } from '../lib/context/MapContext';
 import { getGoogleMapApiKey } from '../lib/infrastructure/apiKey';
 import Head from 'next/head';
+import { logMapError } from '../lib/infrastructure/logger';
 
 const lib: Libraries = ['places'];
 
@@ -21,11 +22,15 @@ function MyApp({ Component, pageProps }: AppProps) {
   const [apiError, setApiError] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
 
-  const { isLoaded } = useLoadScript({
+  const { isLoaded, loadError } = useLoadScript({
     id: 'find-me-a-restaurant',
     googleMapsApiKey: getGoogleMapApiKey(),
     libraries: lib,
   });
+
+  if (loadError) {
+    logMapError(loadError);
+  }
 
   useEffect(() => {
     const getInnerHeight = () => {

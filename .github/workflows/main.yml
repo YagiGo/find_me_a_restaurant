@@ -26,3 +26,7 @@ jobs:
       # Runs a set of commands using the runners shell
       - name: Run ESLint
         run: yarn lint
+      - name: Run Jest
+        run: yarn jest
+      - name: Cypress.io
+        uses: cypress-io/github-action@v2.9.7
