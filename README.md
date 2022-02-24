@@ -1,71 +1,180 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Restaurant Finder
 
-## ESLint and prettier
+This is a web app that helps you shuffle a restaurant out of all options in the area near your office. Alternatively, you can
+search and pick one out by yourself.
 
-Here are dependencies related to ESLint and prettier
+[Try it out](https://restaurant-finder-kappa.vercel.app/)
 
-```
-"@typescript-eslint/eslint-plugin": "^5.12.0",
-"@typescript-eslint/parser": "^5.12.0",
-"eslint": "8.9.0",
-"eslint-config-next": "12.1.0",
-"eslint-config-prettier": "^8.3.0"
-```
+### DeskTop
 
-On top of the default setting from next.js, `"@typescript-eslint/recommended` is also used. To avoid conflicts,
-`eslint-config-prettier` is introduced. This could cause some rules from the `@typescript-eslint/recommended` to be
-excluded.
+![img.png](demoPics/img.png)
 
-Other customized rules
+![img_2.png](demoPics/img_2.png)
 
-ESLint
+### Mobile
 
-```
-  "rules": {
-    "react/prop-types": "off",
-    "@typescript-eslint/explicit-function-return-type": "off"
-  }
-```
+![img_1.png](demoPics/img_1.png)
+![img_3.png](demoPics/img_3.png)
 
-Prettier
+## Features
 
-```
-{
-  "singleQuote": true,
-  "jsxSingleQuote": true,
-  "trailingComma": "all"
-}
-```
+- Randomly select 20 restaurants within the 1 KM radius of the office. Shuffle one out of them displays at the top.
+- Show the detail of the restaurant when clicking the card
+- Show the current status of the restaurant as well as the opeing hours
+- Show photos as well as use reviews and other information such as address, phone number and homepage
+- Search for different restaurants with names, food or address on top.
+- Responsive design and optimized for screens of all sizes.
 
 ## Getting Started
 
-First, run the development server:
+To deploy locally, you need a Google Maps api key. Create a `.env` and stores it as follows
 
-```bash
-npm run dev
-# or
-yarn dev
+```
+GOOGLE_MAP_API=<GOOGLE_MAP_API>
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+In addition, you need to set the center position, this is where the app would base on to search restaurants
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+```
+CENTER_LAT=<CENTER_LAT>
+CENTER_LNG=<CENTER_LNG>
+```
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+Here are some commands
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+```
+yarn # install dependencies
+yarn dev # develop server
+yarn test # run unittests with jest
+yarn e2e # run e2e tests with cypress
+yarn build # build the project
+yarn start # start the build
+```
 
-## Learn More
+Or, you can just use it [here](https://restaurant-finder-kappa.vercel.app/).
 
-To learn more about Next.js, take a look at the following resources:
+## Tech stack
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+This project was built with react and next.js. For the map and keyword search, Google Maps api is implemented. Here are
+main dependencies.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+- fontawesome: For icons
+- react-google-maps/api: Provides plug and play React components of Google Maps api
+- react-bootstrap: Provides basic UI component
+- bootstrap: Provides basic style
+- nanoid: A lightweight id generator
 
-## Deploy on Vercel
+Other dependencies include:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- jest: For unittest
+- cypress: For E2E test
+- eslint: For style check
+- prettier: For code reorganization
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+You can see the full dependency list at `package.json`
+
+## Architecture Walk through
+
+This entire app is built around the Google Maps api as it provides both the map function as well as the search function.
+
+Initially, we need a list of restaurant within the 1 km radius of the office. This can be achieved by using the `nearBySearch` feature. When a user
+clicks a restaurant, we need to get the details of the restaurant. So the `getDetails` api is used. To perform a keyword search, the `textSearch` api is used.
+So we have three methods responsible for getting data from Google Maps
+
+```typescript
+// ./lib/repositories
+// Responsible for getting restaurant list
+// within the 1km radius of the office
+const getRestaurantsWithinRange = (
+  // the type is hard coded as 'restaurant' when called
+  // so that it would only return restaurant result
+  type: string,
+  // the radius is hard coded as 1000 when called,
+  // so that it would only return restaurant within 1km radius
+  radius: number,
+) => {
+  /* ... */
+};
+
+// Responsible for getting the restaurant details
+const getResuaurantDetails = (
+  // The placeId derived from Google Maps api
+  placeId: string,
+) => {
+  /* ... */
+};
+
+// Responsible for keyword search
+const querySearch = (
+  // The keyword for searching
+  keyword: string,
+) => {
+  /* ... */
+};
+```
+
+This web app contains 4 main components: `TopBar`, `MapView`, `RestaurantList` and `RestaurantDetail`. Some of the states must be shared among components. Using Redux
+for project at this scale is a little overkill so instead the context api of React is implemented. The following states and function are shared among components.
+
+```typescript
+// ./lib/entities/MapContext.js
+type MapContextType = {
+  // Restaurant list return from Google Maps api
+  restaurants: Restaurant[] | [];
+  setRestaurants: (restaurant: Restaurant[]) => void;
+  // indicates if the map is being loaded, if it is, a spinning animation will be displayed
+  isLoaded: boolean;
+  // the map instance, which is needed for the placeServices instance
+  map: google.maps.Map | null;
+  setMap: (map: google.maps.Map | null) => void;
+  // placeServices is a instance of RestaurantsRepository
+  placeServices: RestaurantsRepository | null;
+  setPlaceServices: (repo: RestaurantsRepository) => void;
+  // keyword that use inputs
+  keyword: string;
+  setKeyword: (word: string) => void;
+  // indicates if there is an error when accessing Google Maps api, if there is, an error info will be displayed
+  apiError: boolean;
+  setApiError: (val: boolean) => void;
+  // indicates if there is no search result, if there is no result, a no result info will be displayed
+  noResult: boolean;
+  setNoResult: (val: boolean) => void;
+  // indicates if the search is in progress, if it is, a spping animation will be displayed
+  isSearching: boolean;
+  setIsSearching: (val: boolean) => void;
+};
+```
+
+## Possible Improvements
+
+- Currently, when users return from the detail page, the app would call the `querySearch` method to get the result again. This is due to that `restaurant`
+  state is set to the selected one when clicking a restaurant.
+
+```typescript
+// ./pages/details/[id].tsx
+try {
+  const data = await placeServices?.getRestaurantDetails(id);
+  if (!data) return;
+  setDetails(data);
+  setRestaurants([data.basicInfo]);
+} catch (e) {
+  if (e === google.maps.places.PlacesServiceStatus.INVALID_REQUEST) {
+    setApiError(true);
+  }
+```
+
+This makes it easier to implement the Marker on the map so that it can display and center the selected restaurant. On the other hand, `restaurant` gets
+reset every time when clicking a restaurant and in return have to query the API again when going back to the main page. So it would stress the api more.
+
+- The marker can not be clicked, it would be a better user experience if the marker on the map can be clicked directly.
+- Search based on current location would be nice
+- The search result would be in whatever the language in the `Accept-Language` header. It would be nice if the user can choose the language.
+
+## Something nice about this PJ
+
+- Even this is just a small project, cypress and jest are still integrated.
+- ESLint and prettier are also configured
+- Mobile first responsive design makes it easier to be used on mobile devices.
+- GitHub's actions are configured so that CI/CD can be quite easy.
+- Written with TypeScript and achieved complete separation of the front-end and the back-end, combining with automated testing and eslint, it is very easy
+  to scale up and add more features.

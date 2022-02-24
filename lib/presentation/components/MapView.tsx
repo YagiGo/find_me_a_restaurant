@@ -12,18 +12,15 @@ const MapView: FC = () => {
     if (map) {
       setPlaceServices(new RestaurantsRepository(map));
     }
-  }, [map, setPlaceServices]);
+  }, [map]);
 
-  const onMapLoad = useCallback(
-    (map: google.maps.Map) => {
-      setMap(map);
-    },
-    [setMap],
-  );
+  const onMapLoad = useCallback((map: google.maps.Map) => {
+    setMap(map);
+  }, []);
 
   const onMapUnmount = useCallback(() => {
     setMap(null);
-  }, [setMap]);
+  }, []);
 
   const markers = restaurants.map((i) => {
     if (i.lat && i.lng) {
