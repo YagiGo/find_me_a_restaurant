@@ -173,7 +173,8 @@ reset every time when clicking a restaurant and in return have to query the API 
 - The marker can not be clicked, it would be a better user experience if the marker on the map can be clicked directly.
 - Search based on current location would be nice
 - The radius is fixed at 1 km at present, making it adjustable would be nice
-- The search result would be in whatever the language in the `Accept-Language` header. It would be nice if the user can choose the language.
+- The search result would be in whatever the language in the `Accept-Language`. It would be nice if the user can choose the language.
+- Showing whether the restaurant is open from the `RestaurantList` is a nice feature, but due to the API limitation, this can not be achieved. (This feature is deprecated in 2019 and status can only be acquired from getDetails at present)
 
 ## Something nice about this PJ
 
