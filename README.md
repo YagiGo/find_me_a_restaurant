@@ -75,11 +75,11 @@ You can see the full dependency list at `package.json`
 
 ## Architecture Walk through
 
-This entire app is built around the Google Maps api as it provides both the map function as well as the search function.
+This entire app is built around the Google Maps api as it provides both the map function and the search function.
 
-Initially, we need a list of restaurant within the 1 km radius of the office. This can be achieved by using the `nearBySearch` feature. When a user
-clicks a restaurant, we need to get the details of the restaurant. So the `getDetails` api is used. To perform a keyword search, the `textSearch` api is used.
-So we have three methods responsible for getting data from Google Maps
+Initially, we need a list of restaurant within the 1 km radius of the office. This can be achieved by using the [nearBySearch](https://developers.google.com/maps/documentation/places/web-service/search-nearby). When a user
+clicks a restaurant, we need to get the details of the restaurant. So the [getDetails](https://developers.google.com/maps/documentation/javascript/places#place_details) api is used. To perform a keyword search, the [textSearch](https://developers.google.com/maps/documentation/javascript/places#TextSearchRequests) api is used.
+So I have created three methods responsible for getting data from Google Maps using the apis.
 
 ```typescript
 // ./lib/repositories
@@ -112,6 +112,9 @@ const querySearch = (
   /* ... */
 };
 ```
+
+Once the response received, the `Restaurant` and `Detail` objects will be created and update `restaurants` and `details` states accordingly. For the detailed definition of `Restaurant` and `Detail`,
+please refer to classes at `./lib/entities`. The state updates trigger the UI components to update, so the restaurant list, map view and restaurant details will be updated as well.
 
 This web app contains 4 main components: `TopBar`, `MapView`, `RestaurantList` and `RestaurantDetail`. Some of the states must be shared among components. Using Redux
 for project at this scale is a little overkill so instead the context api of React is implemented. The following states and function are shared among components.
@@ -161,6 +164,7 @@ try {
   if (e === google.maps.places.PlacesServiceStatus.INVALID_REQUEST) {
     setApiError(true);
   }
+}
 ```
 
 This makes it easier to implement the Marker on the map so that it can display and center the selected restaurant. On the other hand, `restaurant` gets
@@ -168,6 +172,7 @@ reset every time when clicking a restaurant and in return have to query the API 
 
 - The marker can not be clicked, it would be a better user experience if the marker on the map can be clicked directly.
 - Search based on current location would be nice
+- The radius is fixed at 1 km at present, making it adjustable would be nice
 - The search result would be in whatever the language in the `Accept-Language` header. It would be nice if the user can choose the language.
 
 ## Something nice about this PJ
